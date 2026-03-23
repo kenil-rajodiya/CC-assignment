@@ -1,12 +1,18 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 import joblib
+import os
 import pandas as pd
+from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 
-API_KEY = "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"
+load_dotenv()
+API_KEY = os.getenv("GROQ_API_KEY")
+
+if not API_KEY:
+    raise ValueError("GROQ_API_KEY is not set in the environment/.env file")
 model = joblib.load("./anomaly_model.pkl")
 scaler = joblib.load("./scaler.pkl")
 llm = ChatGroq(model="llama-3.1-8b-instant", api_key=API_KEY, temperature=0)
