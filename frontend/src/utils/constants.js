@@ -13,7 +13,7 @@ export const FRONTEND_CONSTANTS = {
 
   // Polling
   POLLING_INTERVAL: parseInt(
-    import.meta.env.VITE_POLLING_INTERVAL || "5000",
+    import.meta.env.VITE_POLLING_INTERVAL || "15000",
     10,
   ),
 
@@ -29,7 +29,7 @@ export const FRONTEND_CONSTANTS = {
   },
 
   // Alert
-  CRITICAL_PREDICTION: 1,
+  CRITICAL_PREDICTION: -1,
   ALERT_THRESHOLD: 1,
 };
 

@@ -1,8 +1,8 @@
 import React from "react";
 import CONSTANTS from "../utils/constants.js";
 
-export const AlertBanner = ({ isCritical, alert }) => {
-  if (!isCritical || !alert) {
+export const AlertBanner = ({ isCritical, alert, finalState, reason }) => {
+  if (!isCritical || (!finalState && !reason && !alert)) {
     return null;
   }
 
@@ -24,9 +24,9 @@ export const AlertBanner = ({ isCritical, alert }) => {
           </svg>
         </div>
         <div className="ml-3">
-          <p className="font-bold text-lg">{alert}</p>
+          <p className="font-bold text-lg">{finalState || alert}</p>
           <p className="text-sm mt-1">
-            System is under critical load. Please monitor closely.
+            {reason || "System is under critical load. Please monitor closely."}
           </p>
         </div>
       </div>

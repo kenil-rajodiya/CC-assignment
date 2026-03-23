@@ -12,12 +12,12 @@ export const CONSTANTS = {
   ML_PREDICT_ENDPOINT: "/predict",
 
   // Metrics
-  METRICS_COLLECTION_INTERVAL: 10000, // 5 seconds in milliseconds
-  POLLING_INTERVAL: process.env.POLLING_INTERVAL || 10000,
+  METRICS_COLLECTION_INTERVAL: 15000, // 15 seconds in milliseconds
+  POLLING_INTERVAL: process.env.POLLING_INTERVAL || 15000,
 
   // Alert
   ALERT_THRESHOLD: process.env.ALERT_THRESHOLD || 1,
-  CRITICAL_PREDICTION: 1,
+  CRITICAL_PREDICTION: -1,
 
   // Database Query Limits
   LATEST_METRICS_LIMIT: 1,

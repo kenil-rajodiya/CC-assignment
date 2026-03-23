@@ -20,52 +20,92 @@ class MLService {
    * @param {number} metrics.diskWrite - Disk write throughput
    * @param {number} metrics.networkReceived - Network received bytes
    * @param {number} metrics.networkTransmitted - Network transmitted bytes
-   * @returns {Promise<number>} Prediction value (0 or 1)
+   * @returns {Promise<{prediction: number, finalState: (string|null), reason: (string|null)}>} Prediction details
    */
   async getPrediction(metrics) {
     try {
       const payload = {
+        CPU_cores: 2,
         CPU: metrics.cpu,
-        Memory: metrics.memory,
         Disk_read: metrics.diskRead,
         Disk_write: metrics.diskWrite,
-        Network_recieved: metrics.networkReceived,
+        Network_received: metrics.networkReceived,
         Network_transmitted: metrics.networkTransmitted,
       };
 
-      console.log("Calling ML API with payload:", payload);
+      // console.log("Calling ML API with payload:", payload);
 
       const response = await this.client.post(this.predictEndpoint, payload);
+      // console.log(response.data);
 
       if (response.data) {
-        // Handle both correct spelling "Prediction" and typo "Predection"
+        // New response format: { final_state: string, reason: string }
+        if (response.data.final_state) {
+          const { final_state, reason } = response.data;
+          console.log("ML final_state:", final_state, "reason:", reason);
+
+          const normalizedState = String(final_state).toLowerCase();
+
+          // Map final_state to numeric prediction used by the app
+          // Treat "normal" explicitly as healthy (1), everything else as critical (-1)
+          const mappedPrediction = normalizedState === "normal" ? 1 : -1;
+
+          console.log(`Mapped ML Prediction: ${mappedPrediction}`);
+          return {
+            prediction: mappedPrediction,
+            finalState: final_state,
+            reason: reason || null,
+          };
+        }
+
+        // Backwards compatibility: handle numeric Prediction / Predection fields
         let prediction = response.data.Prediction ?? response.data.Predection;
 
         if (prediction !== undefined && prediction !== null) {
           const parsed = parseInt(prediction, 10);
 
-          // Validate prediction is 0 or 1, default to 0 if invalid
-          if (parsed === 0 || parsed === 1) {
+          // Validate prediction is -1 or 1, default to 1 (normal) if invalid
+          if (parsed === -1 || parsed === 1) {
             console.log(`ML Prediction: ${parsed}`);
-            return parsed;
+            return {
+              prediction: parsed,
+              finalState: parsed === -1 ? "Anomaly" : "Normal",
+              reason: null,
+            };
           } else {
             console.warn(
-              `Invalid prediction value: ${parsed}. Defaulting to 0 (normal)`,
+              `Invalid prediction value: ${parsed}. Defaulting to 1 (normal)`,
             );
-            return 0;
+            return {
+              prediction: 1,
+              finalState: "Normal",
+              reason: null,
+            };
           }
-        } else {
-          console.warn("Unexpected ML API response format:", response.data);
-          return 0; // Default to normal if response is malformed
         }
+
+        console.warn("Unexpected ML API response format:", response.data);
+        return {
+          prediction: 1, // Default to normal if response is malformed
+          finalState: "Normal",
+          reason: null,
+        };
       } else {
         console.warn("Empty ML API response");
-        return 0; // Default to normal if response is malformed
+        return {
+          prediction: 1, // Default to normal if response is malformed
+          finalState: "Normal",
+          reason: null,
+        };
       }
     } catch (error) {
       console.error("Error calling ML API:", error.message);
-      // Return 0 (normal) as fallback if ML API is unavailable
-      return 0;
+      // Return 1 (normal) as fallback if ML API is unavailable
+      return {
+        prediction: 1,
+        finalState: "Normal",
+        reason: "ML API unavailable",
+      };
     }
   }
 

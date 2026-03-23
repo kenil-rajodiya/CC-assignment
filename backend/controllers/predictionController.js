@@ -27,13 +27,16 @@ export const testPrediction = async (req, res, next) => {
       }
     }
 
-    const prediction = await mlService.getPrediction(metrics);
+    const { prediction, finalState, reason } =
+      await mlService.getPrediction(metrics);
 
     res.status(200).json({
       success: true,
       message: "Prediction retrieved successfully",
       data: {
         prediction,
+        finalState,
+        reason,
         metrics,
       },
     });

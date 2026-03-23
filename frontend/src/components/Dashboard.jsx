@@ -21,7 +21,6 @@ export const Dashboard = () => {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg p-8 text-center max-w-md w-full">
-          <div className="text-5xl mb-4">⚠️</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Connection Error
           </h1>
@@ -120,12 +119,17 @@ export const Dashboard = () => {
 
         {/* Alert Banner */}
         {systemHealth && (
-          <AlertBanner isCritical={isCritical} alert={systemHealth.alert} />
+          <AlertBanner
+            isCritical={isCritical}
+            alert={systemHealth.alert}
+            finalState={systemHealth.finalState}
+            reason={systemHealth.reason}
+          />
         )}
 
         {/* Status Cards */}
         {latestMetric && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
             <StatusCard
               title="CPU Usage"
               value={latestMetric.cpu?.toFixed(2) || 0}
@@ -149,6 +153,22 @@ export const Dashboard = () => {
               value={latestMetric.networkReceived || 0}
               unit="bytes"
               variant="success"
+            />
+            <StatusCard
+              title="Health Prediction"
+              value={
+                latestMetric.finalState && latestMetric.finalState.trim()
+                  ? latestMetric.finalState
+                  : latestMetric.prediction === CONSTANTS.CRITICAL_PREDICTION
+                    ? "Anomaly"
+                    : "Normal"
+              }
+              unit=""
+              variant={
+                latestMetric.prediction === CONSTANTS.CRITICAL_PREDICTION
+                  ? "danger"
+                  : "success"
+              }
             />
           </div>
         )}

@@ -7,22 +7,19 @@ const PORT = CONSTANTS.PORT;
 
 const startServer = async () => {
   try {
-    // Connect to MongoDB
     await connectDB();
 
-    // Start metrics collector
     await metricsCollector.start();
 
-    // Start Express server
     app.listen(PORT, () => {
       console.log(`
-╔════════════════════════════════════════════╗
-║  Monitoring Dashboard Backend              ║
-║  Server running on port ${PORT}            ║
-║  Environment: ${CONSTANTS.NODE_ENV}        ║
-║  MongoDB: Connected                        ║
-║  Metrics Collector: Running                ║
-╚════════════════════════════════════════════╝
+
+  Monitoring Dashboard Backend              
+  Server running on port ${PORT}            
+ Environment: ${CONSTANTS.NODE_ENV}        
+  MongoDB: Connected                        
+  Metrics Collector: Running                
+
       `);
     });
   } catch (error) {
@@ -31,7 +28,6 @@ const startServer = async () => {
   }
 };
 
-// Handle graceful shutdown
 process.on("SIGINT", () => {
   console.log("\nShutting down gracefully...");
   metricsCollector.stop();

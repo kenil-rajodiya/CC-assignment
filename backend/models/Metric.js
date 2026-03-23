@@ -41,8 +41,16 @@ const metricSchema = new mongoose.Schema(
     },
     prediction: {
       type: Number,
-      enum: [0, 1],
+      enum: [-1, 1],
       required: true,
+    },
+    finalState: {
+      type: String,
+      default: null,
+    },
+    reason: {
+      type: String,
+      default: null,
     },
   },
   {

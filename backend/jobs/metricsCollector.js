@@ -65,14 +65,14 @@ class MetricsCollector {
     try {
       const metrics = await this.collectMetrics();
       await metricsService.saveMetrics(metrics);
-      console.log(`✓ Metrics processed at ${new Date().toISOString()}`);
+      console.log(`Metrics processed at ${new Date().toISOString()}`);
     } catch (error) {
       console.error("Error processing metrics:", error.message);
     }
   }
 
   /**
-   * Start collecting metrics every 5 seconds
+   * Start collecting metrics every 15 seconds
    */
   async start() {
     if (this.isRunning) {
@@ -86,15 +86,15 @@ class MetricsCollector {
       // Run immediately on startup
       await this.processMetrics();
 
-      // Schedule to run every 5 seconds using node-cron
-      // */5 * * * * * means every 5 seconds
-      this.task = cron.schedule("*/5 * * * * *", async () => {
+      // Schedule to run every 15 seconds using node-cron
+      // */15 * * * * * means every 15 seconds
+      this.task = cron.schedule("*/15 * * * * *", async () => {
         await this.processMetrics();
       });
 
       this.isRunning = true;
-      console.log("✓ Metrics collector started");
-      console.log(`✓ Collecting metrics every 5 seconds`);
+      console.log("Metrics collector started");
+      console.log(`Collecting metrics every 15 seconds`);
     } catch (error) {
       console.error("Error starting metrics collector:", error.message);
       throw error;
@@ -115,7 +115,7 @@ class MetricsCollector {
     }
 
     this.isRunning = false;
-    console.log("✓ Metrics collector stopped");
+    console.log("Metrics collector stopped");
   }
 
   /**

@@ -11,7 +11,8 @@ class MetricsService {
   async saveMetrics(metrics) {
     try {
       // Get prediction from ML service
-      const prediction = await mlService.getPrediction(metrics);
+      const { prediction, finalState, reason } =
+        await mlService.getPrediction(metrics);
 
       // Create metric document
       const metricData = {
@@ -23,6 +24,8 @@ class MetricsService {
         networkReceived: metrics.networkReceived,
         networkTransmitted: metrics.networkTransmitted,
         prediction,
+        finalState,
+        reason,
       };
 
       // Save to MongoDB
@@ -99,6 +102,9 @@ class MetricsService {
           networkTransmitted: latestMetric.networkTransmitted,
         },
         prediction: latestMetric.prediction,
+        finalState:
+          latestMetric.finalState || (isCritical ? "Anomaly" : "Normal"),
+        reason: latestMetric.reason || null,
         alert: isCritical ? "⚠ High system load detected" : null,
       };
     } catch (error) {
@@ -118,7 +124,7 @@ class MetricsService {
         .sort({ timestamp: -1 })
         .limit(limit)
         .select(
-          "timestamp cpu memory diskRead diskWrite networkReceived networkTransmitted prediction",
+          "timestamp cpu memory diskRead diskWrite networkReceived networkTransmitted prediction finalState reason",
         )
         .lean();
       return metrics.reverse(); // Return in ascending order for charts

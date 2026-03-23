@@ -16,7 +16,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan("combined"));
+// Commented out HTTP access logging to reduce console noise
+// app.use(morgan("combined"));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

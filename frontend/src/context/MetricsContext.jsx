@@ -1,4 +1,5 @@
 import { createContext, useState, useCallback } from "react";
+import CONSTANTS from "../utils/constants.js";
 
 export const MetricsContext = createContext();
 
@@ -17,14 +18,14 @@ export const MetricsProvider = ({ children }) => {
   const updateLatestMetric = useCallback((metric) => {
     setLatestMetric(metric);
     if (metric) {
-      setIsCritical(metric.prediction === 1);
+      setIsCritical(metric.prediction === CONSTANTS.CRITICAL_PREDICTION);
     }
   }, []);
 
   const updateSystemHealth = useCallback((health) => {
     setSystemHealth(health);
     if (health) {
-      setIsCritical(health.prediction === 1);
+      setIsCritical(health.prediction === CONSTANTS.CRITICAL_PREDICTION);
     }
   }, []);
 
