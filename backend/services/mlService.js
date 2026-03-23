@@ -11,17 +11,6 @@ class MLService {
     });
   }
 
-  /**
-   * Call ML API to get prediction
-   * @param {Object} metrics - System metrics
-   * @param {number} metrics.cpu - CPU usage percentage
-   * @param {number} metrics.memory - Memory usage percentage
-   * @param {number} metrics.diskRead - Disk read throughput
-   * @param {number} metrics.diskWrite - Disk write throughput
-   * @param {number} metrics.networkReceived - Network received bytes
-   * @param {number} metrics.networkTransmitted - Network transmitted bytes
-   * @returns {Promise<{prediction: number, finalState: (string|null), reason: (string|null)}>} Prediction details
-   */
   async getPrediction(metrics) {
     try {
       const payload = {
@@ -33,21 +22,16 @@ class MLService {
         Network_transmitted: metrics.networkTransmitted,
       };
 
-      // console.log("Calling ML API with payload:", payload);
-
       const response = await this.client.post(this.predictEndpoint, payload);
       // console.log(response.data);
 
       if (response.data) {
-        // New response format: { final_state: string, reason: string }
         if (response.data.final_state) {
           const { final_state, reason } = response.data;
           console.log("ML final_state:", final_state, "reason:", reason);
 
           const normalizedState = String(final_state).toLowerCase();
 
-          // Map final_state to numeric prediction used by the app
-          // Treat "normal" explicitly as healthy (1), everything else as critical (-1)
           const mappedPrediction = normalizedState === "normal" ? 1 : -1;
 
           console.log(`Mapped ML Prediction: ${mappedPrediction}`);
@@ -58,13 +42,11 @@ class MLService {
           };
         }
 
-        // Backwards compatibility: handle numeric Prediction / Predection fields
         let prediction = response.data.Prediction ?? response.data.Predection;
 
         if (prediction !== undefined && prediction !== null) {
           const parsed = parseInt(prediction, 10);
 
-          // Validate prediction is -1 or 1, default to 1 (normal) if invalid
           if (parsed === -1 || parsed === 1) {
             console.log(`ML Prediction: ${parsed}`);
             return {
@@ -86,21 +68,38 @@ class MLService {
 
         console.warn("Unexpected ML API response format:", response.data);
         return {
-          prediction: 1, // Default to normal if response is malformed
+          prediction: 1,
           finalState: "Normal",
           reason: null,
         };
       } else {
         console.warn("Empty ML API response");
         return {
-          prediction: 1, // Default to normal if response is malformed
+          prediction: 1,
           finalState: "Normal",
           reason: null,
         };
       }
     } catch (error) {
-      console.error("Error calling ML API:", error.message);
-      // Return 1 (normal) as fallback if ML API is unavailable
+      console.error("Error calling ML API:", error);
+      if (error?.message) {
+        console.error(" message:", error.message);
+      }
+      if (error?.code) {
+        console.error(" code:", error.code);
+      }
+      if (error?.response) {
+        console.error(
+          " status:",
+          error.response.status,
+          "data:",
+          error.response.data,
+        );
+      }
+      if (!error?.message && !error?.response && !error?.code) {
+        console.error(error);
+      }
+
       return {
         prediction: 1,
         finalState: "Normal",
@@ -109,10 +108,6 @@ class MLService {
     }
   }
 
-  /**
-   * Check if ML API is healthy
-   * @returns {Promise<boolean>} True if API is accessible
-   */
   async isHealthy() {
     try {
       await this.client.get("/");

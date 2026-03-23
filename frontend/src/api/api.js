@@ -6,9 +6,7 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// API endpoints
 export const apiClient = {
-  // Metrics endpoints
   getLatestMetrics: () => api.get(CONSTANTS.API_ENDPOINTS.METRICS_LATEST),
   getMetricsHistory: (limit = 100) =>
     api.get(CONSTANTS.API_ENDPOINTS.METRICS_HISTORY, { params: { limit } }),
@@ -16,12 +14,10 @@ export const apiClient = {
   getChartData: (limit = 50) =>
     api.get(CONSTANTS.API_ENDPOINTS.METRICS_CHART, { params: { limit } }),
 
-  // Prediction endpoints
   testPrediction: (metrics) =>
     api.post(CONSTANTS.API_ENDPOINTS.PREDICTION_TEST, metrics),
   checkMLHealth: () => api.get(CONSTANTS.API_ENDPOINTS.PREDICTION_HEALTH),
 
-  // Health check
   checkBackendHealth: () => api.get(CONSTANTS.API_ENDPOINTS.HEALTH),
 };
 

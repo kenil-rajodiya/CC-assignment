@@ -58,7 +58,6 @@ const metricSchema = new mongoose.Schema(
   },
 );
 
-// Create index for better query performance
 metricSchema.index({ timestamp: -1 });
 metricSchema.index({ prediction: 1 });
 

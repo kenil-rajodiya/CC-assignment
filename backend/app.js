@@ -12,14 +12,10 @@ import metricsCollector from "./jobs/metricsCollector.js";
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// Commented out HTTP access logging to reduce console noise
-// app.use(morgan("combined"));
 
-// Health check endpoint
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -29,11 +25,9 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// API Routes
 app.use("/api/metrics", metricsRoutes);
 app.use("/api/prediction", predictionRoutes);
 
-// Root endpoint
 app.get("/", (req, res) => {
   res.json({
     message: "Cloud-Based Real-Time Monitoring Dashboard API",
@@ -54,10 +48,8 @@ app.get("/", (req, res) => {
   });
 });
 
-// 404 handler
 app.use(notFoundHandler);
 
-// Error handling middleware (must be last)
 app.use(errorHandler);
 
 export default app;

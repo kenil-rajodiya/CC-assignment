@@ -25,7 +25,6 @@ export const useMetrics = () => {
 
   const [isConnected, setIsConnected] = useState(false);
 
-  // Fetch chart data
   const fetchChartData = useCallback(async () => {
     try {
       setLoadingState(true);
@@ -44,7 +43,6 @@ export const useMetrics = () => {
     }
   }, [updateMetrics, setErrorState, setLoadingState]);
 
-  // Fetch latest metric
   const fetchLatestMetric = useCallback(async () => {
     try {
       const response = await apiClient.getLatestMetrics();
@@ -60,7 +58,6 @@ export const useMetrics = () => {
     }
   }, [updateLatestMetric, setErrorState]);
 
-  // Fetch system health
   const fetchSystemHealth = useCallback(async () => {
     try {
       const response = await apiClient.getSystemStatus();
@@ -76,7 +73,6 @@ export const useMetrics = () => {
     }
   }, [updateSystemHealth, setErrorState]);
 
-  // Fetch all data (called on interval)
   const fetchAllMetrics = useCallback(async () => {
     try {
       setLoadingState(true);
@@ -102,12 +98,9 @@ export const useMetrics = () => {
     setLoadingState,
   ]);
 
-  // Setup polling on mount
   useEffect(() => {
-    // Fetch immediately on mount
     fetchAllMetrics();
 
-    // Set up polling interval
     const interval = setInterval(fetchAllMetrics, CONSTANTS.POLLING_INTERVAL);
 
     return () => {

@@ -2,6 +2,7 @@ import si from "systeminformation";
 import cron from "node-cron";
 import metricsService from "../services/metricsService.js";
 import { CONSTANTS } from "../utils/constants.js";
+import { getCloudMetrics } from "../cloudwatchapi/tm.js";
 
 class MetricsCollector {
   constructor() {
@@ -9,12 +10,10 @@ class MetricsCollector {
     this.task = null;
   }
 
-  /**
-   * Collect system metrics
-   * @returns {Promise<Object>} System metrics
-   */
   async collectMetrics() {
     try {
+      //local system metrics collection (laptop)
+      /*
       console.log("Collecting system metrics...");
 
       // Get CPU usage
@@ -52,15 +51,34 @@ class MetricsCollector {
 
       console.log("Metrics collected:", metrics);
       return metrics;
+      */
+
+      console.log("Collecting AWS CloudWatch metrics...");
+
+      const instanceId = process.env.AWS_INSTANCE_ID || "i-06d7c500ae25efa2f";
+      const cloudMetrics = await getCloudMetrics(instanceId);
+
+      if (!cloudMetrics) {
+        throw new Error("Failed to fetch CloudWatch metrics");
+      }
+
+      const metrics = {
+        cpu: cloudMetrics.cpu ?? 0,
+        memory: 0,
+        diskRead: cloudMetrics.diskRead ?? 0,
+        diskWrite: cloudMetrics.diskWrite ?? 0,
+        networkReceived: cloudMetrics.networkReceived ?? 0,
+        networkTransmitted: cloudMetrics.networkTransmitted ?? 0,
+      };
+
+      console.log("Cloud metrics collected:", metrics);
+      return metrics;
     } catch (error) {
       console.error("Error collecting metrics:", error.message);
       throw error;
     }
   }
 
-  /**
-   * Process: Collect metrics -> Call ML API -> Store in DB
-   */
   async processMetrics() {
     try {
       const metrics = await this.collectMetrics();
@@ -71,9 +89,6 @@ class MetricsCollector {
     }
   }
 
-  /**
-   * Start collecting metrics every 15 seconds
-   */
   async start() {
     if (this.isRunning) {
       console.log("Metrics collector is already running");
@@ -83,11 +98,8 @@ class MetricsCollector {
     console.log("Starting metrics collector...");
 
     try {
-      // Run immediately on startup
       await this.processMetrics();
 
-      // Schedule to run every 15 seconds using node-cron
-      // */15 * * * * * means every 15 seconds
       this.task = cron.schedule("*/15 * * * * *", async () => {
         await this.processMetrics();
       });
@@ -101,9 +113,7 @@ class MetricsCollector {
     }
   }
 
-  /**
-   * Stop collecting metrics
-   */
+  
   stop() {
     if (!this.isRunning) {
       console.log("Metrics collector is not running");
@@ -118,9 +128,6 @@ class MetricsCollector {
     console.log("Metrics collector stopped");
   }
 
-  /**
-   * Get collector status
-   */
   getStatus() {
     return {
       isRunning: this.isRunning,

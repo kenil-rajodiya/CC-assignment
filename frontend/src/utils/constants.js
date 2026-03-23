@@ -1,5 +1,5 @@
 export const FRONTEND_CONSTANTS = {
-  // API
+  
   API_URL: import.meta.env.VITE_API_URL || "http://localhost:5000",
   API_ENDPOINTS: {
     METRICS_LATEST: "/api/metrics/latest",
@@ -11,13 +11,11 @@ export const FRONTEND_CONSTANTS = {
     HEALTH: "/api/health",
   },
 
-  // Polling
   POLLING_INTERVAL: parseInt(
     import.meta.env.VITE_POLLING_INTERVAL || "15000",
     10,
   ),
 
-  // Chart
   CHART_DATA_LIMIT: 50,
   CHART_COLORS: {
     cpu: "#ef4444",
@@ -28,7 +26,6 @@ export const FRONTEND_CONSTANTS = {
     networkTransmitted: "#f59e0b",
   },
 
-  // Alert
   CRITICAL_PREDICTION: -1,
   ALERT_THRESHOLD: 1,
 };

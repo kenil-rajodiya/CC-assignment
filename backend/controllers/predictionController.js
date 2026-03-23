@@ -1,14 +1,10 @@
 import mlService from "../services/mlService.js";
 
-/**
- * Test ML prediction API
- * POST /api/prediction/test
- */
+
 export const testPrediction = async (req, res, next) => {
   try {
     const metrics = req.body;
 
-    // Validate required fields
     const requiredFields = [
       "cpu",
       "memory",
@@ -45,10 +41,6 @@ export const testPrediction = async (req, res, next) => {
   }
 };
 
-/**
- * Check ML API health
- * GET /api/prediction/health
- */
 export const checkMLHealth = async (req, res, next) => {
   try {
     const isHealthy = await mlService.isHealthy();

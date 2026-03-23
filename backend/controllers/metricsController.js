@@ -1,9 +1,6 @@
 import metricsService from "../services/metricsService.js";
 
-/**
- * Get latest metrics
- * GET /api/metrics/latest
- */
+
 export const getLatestMetrics = async (req, res, next) => {
   try {
     const metric = await metricsService.getLatestMetric();
@@ -26,10 +23,7 @@ export const getLatestMetrics = async (req, res, next) => {
   }
 };
 
-/**
- * Get metrics history
- * GET /api/metrics/history
- */
+
 export const getMetricsHistory = async (req, res, next) => {
   try {
     const { limit = 100 } = req.query;
@@ -46,10 +40,6 @@ export const getMetricsHistory = async (req, res, next) => {
   }
 };
 
-/**
- * Get system health status
- * GET /api/metrics/status
- */
 export const getSystemStatus = async (req, res, next) => {
   try {
     const health = await metricsService.getSystemHealth();
@@ -64,10 +54,7 @@ export const getSystemStatus = async (req, res, next) => {
   }
 };
 
-/**
- * Get chart data
- * GET /api/metrics/chart
- */
+
 export const getChartData = async (req, res, next) => {
   try {
     const { limit = 50 } = req.query;

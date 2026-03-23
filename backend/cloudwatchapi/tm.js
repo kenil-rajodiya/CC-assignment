@@ -1,13 +1,16 @@
+import dotenv from "dotenv";
+dotenv.config({ path: "../.env" });
+
 import {
   CloudWatchClient,
   GetMetricDataCommand,
 } from "@aws-sdk/client-cloudwatch";
 
 const client = new CloudWatchClient({
-  region: "eu-north-1",
+  region: process.env.AWS_REGION || "eu-north-1",
   credentials: {
-    accessKeyId: "AKIAWAWNC4NLEWZ3WQ5V",
-    secretAccessKey: "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",
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 

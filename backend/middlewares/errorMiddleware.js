@@ -1,7 +1,4 @@
-/**
- * Error handling middleware
- * Centralized error handler for all routes
- */
+
 export const errorHandler = (err, req, res, next) => {
   const status = err.status || err.statusCode || 500;
   const message = err.message || "Internal Server Error";
@@ -16,9 +13,6 @@ export const errorHandler = (err, req, res, next) => {
   });
 };
 
-/**
- * 404 Not Found middleware
- */
 export const notFoundHandler = (req, res, next) => {
   res.status(404).json({
     success: false,
@@ -26,10 +20,6 @@ export const notFoundHandler = (req, res, next) => {
   });
 };
 
-/**
- * Async error wrapper
- * Wraps async route handlers to catch errors
- */
 export const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };

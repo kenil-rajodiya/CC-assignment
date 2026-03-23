@@ -107,17 +107,15 @@ export const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900">
-            📊 Monitoring Dashboard
+            Monitoring Dashboard
           </h1>
           <p className="text-gray-600 mt-2">
             Real-time system metrics and performance monitoring
           </p>
         </div>
 
-        {/* Alert Banner */}
         {systemHealth && (
           <AlertBanner
             isCritical={isCritical}
@@ -127,7 +125,6 @@ export const Dashboard = () => {
           />
         )}
 
-        {/* Status Cards */}
         {latestMetric && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
             <StatusCard
@@ -173,7 +170,6 @@ export const Dashboard = () => {
           </div>
         )}
 
-        {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <MetricsChart
             data={metrics}
@@ -205,8 +201,7 @@ export const Dashboard = () => {
           />
         </div>
 
-        {/* Footer */}
-        <div className="flex justify-between items-center text-gray-600 text-sm">
+        <div className="flex justify-between items-center text-gray-600 text-md">
           <p>
             Last updated:{" "}
             {latestMetric

@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config({ path: "../.env" });
+
 import app from "./app.js";
 import connectDB from "./config/db.js";
 import metricsCollector from "./jobs/metricsCollector.js";
@@ -12,14 +15,7 @@ const startServer = async () => {
     await metricsCollector.start();
 
     app.listen(PORT, () => {
-      console.log(`
-
-  Monitoring Dashboard Backend              
-  Server running on port ${PORT}            
- Environment: ${CONSTANTS.NODE_ENV}        
-  MongoDB: Connected                        
-  Metrics Collector: Running                
-
+      console.log(`Monitoring Dashboard Backend\nServer running on port ${PORT}\nMongoDB: Connected
       `);
     });
   } catch (error) {
